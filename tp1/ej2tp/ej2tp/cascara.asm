@@ -46,41 +46,34 @@ main:
 
 	clr r16
 	out DDRD, r16
+	ldi r16, 0x40
+	out PORTD, r16
 
 	ser r16
 	out DDRB, r16
-	out PORTB, 0x00
+	ldi r16, 0x00
+	out PORTB, r16
 	
-	MASK = 0xc0
-	PIN_ON = 0x80
-	PIN_OFF = 0x40
 	
 ; Arranca mi loop principal que se ejecutará eternamente	
+
 main_loop:
-	;ldi16 cont, r17, 1024 	; uso de la macro
-	
-	in r16,PIND
-	and r16,PIN_ON
-	cp r16,PIN_ON
-	brne on	
+
+ES_UNO_ON:
+	sbic PIND, 7
+	rjmp ES_UNO_ON
+ES_CERO_ON:
+	ldi r17, 0x0c
+	out PORTB, r17
+ES_UNO_OFF:
+	sbic PIND, 6
+	rjmp ES_UNO_OFF
+ES_CERO_OFF:
+	ldi r17, 0x00
+	out PORTB, r17
+
 	rjmp main_loop
 
-loop2:
-	in r16,PIND
-	and r16,PIN_OFF
-	cp r16,PIN_OFF
-	brne off
-	rjmp loop2	
-
-on:	
-	ldi	r17,0x0c
-	out PORTD,r17
-	rjmp loop2
-
-off:
-	clr r17
-	out PORTD,r17
-	rjmp main_loop
 
 ; Definicion de tabla en memoria de codigo
 tabla: .db	"Esto es una tabla constante", 0x00
